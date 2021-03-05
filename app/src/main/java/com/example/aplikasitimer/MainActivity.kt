@@ -13,6 +13,7 @@ class MainActivity : AppCompatActivity() {
     var pauseOffset = 0L
     lateinit var chronometer: Chronometer
     lateinit var btnStart:Button
+    lateinit var btnPause:Button
     lateinit var btnReset:Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,12 +22,17 @@ class MainActivity : AppCompatActivity() {
 
         chronometer = findViewById<Chronometer>(R.id.chronometer)
         btnStart = findViewById<Button>(R.id.btnStart)
+        btnPause = findViewById<Button>(R.id.btnPause)
         btnReset = findViewById<Button>(R.id.btnReset)
 
         btnStart.setOnClickListener {
             if (!running) {
                 startChronometer()
-            } else {
+            }
+        }
+
+        btnPause.setOnClickListener {
+            if (running) {
                 pauseChronometer()
             }
         }
@@ -37,23 +43,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun startChronometer() {
+        // SystemClock.elapsedRealtime() = waktu yang dihitung saat aplikasi dibuka + aplikasi dihidden juga
+        // chronometer setBase ini fungsinya adl menentukan start waktu 0-nya mulai darimana
         chronometer.base = SystemClock.elapsedRealtime() - pauseOffset
         chronometer.start()
         running = true
-        btnStart.text = "Pause"
     }
 
     fun pauseChronometer() {
         chronometer.stop()
         pauseOffset = SystemClock.elapsedRealtime() - chronometer.base
-        running = false
-        btnStart.text = "Start"
+        running = false // harus dikasih flag, karena kalo tidak. pauseOffset ini akan keupdate dan akan mempengaruhi waktu stopwatchnya
     }
 
     fun resetChronometer() {
         chronometer.base = SystemClock.elapsedRealtime()
         pauseOffset = 0
         running = false
-        btnStart.text = "Start"
     }
 }
